@@ -1,0 +1,82 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Copyright 2026 CogniPilot Foundation */
+
+/*
+ * All hardware wiring for this board lives in zephyr_boards'
+ * boards/nxp/tropic_community/tropic_community.dts - this app-level
+ * overlay only maps the rdd2 app's generic sensor/actuator aliases onto
+ * that board's chip labels, and configures the DShot actuator mapping,
+ * the same split mr_vmu_tropic.overlay uses relative to its own board.dts.
+ */
+
+/ {
+	aliases {
+		can0 = &flexcan3;
+		accel0 = &imu0;
+		gyro0 = &imu0;
+		mag0 = &bmm350;
+		baro0 = &bme280;
+		buzzer = &buzzer0;
+		gnss = &gnss1;
+		rc = &rc0;
+	};
+
+	dshot_actuators: dshot_actuators {
+		compatible = "cerebri,dshot-actuators";
+		aux0 {
+			input-type = "velocity";
+			input-index = <0>;
+			center = <200>;
+			scale = <1500>;
+			scale-div = <1000>;
+		};
+		aux1 {
+			input-type = "velocity";
+			input-index = <1>;
+			center = <200>;
+			scale = <1500>;
+			scale-div = <1000>;
+		};
+		aux2 {
+			input-type = "velocity";
+			input-index = <2>;
+			center = <200>;
+			scale = <1500>;
+			scale-div = <1000>;
+		};
+		aux3 {
+			input-type = "velocity";
+			input-index = <3>;
+			center = <200>;
+			scale = <1500>;
+			scale-div = <1000>;
+		};
+	};
+};
+
+/* GPS connector, Teensy pins 15/14 (enabled by the board dts, only the
+ * GNSS chip binding lives here - genuinely depends on which module gets
+ * plugged into the DS-009 connector, same reasoning mr_vmu_tropic uses
+ * for its own gnss1 node).
+ *
+ * SOLVED (synced from app/hab, where this was actually root-caused with a
+ * real M10 module on this same board): byte-level RX instrumentation on a
+ * u-blox,m10 driver (correctly talking at this baud) showed the module
+ * continuously streaming plain ASCII/NMEA text, never UBX binary frames -
+ * so the module's actual default output protocol is NMEA, not UBX, and
+ * 115200 (confirmed via Holybro's own docs for this exact module) is the
+ * correct baud. Both M8 and M10 UBX-based drivers only ever failed
+ * because they were listening for 0xB5 0x62 binary frames this module
+ * was never going to send. Plain gnss-nmea-generic, at the correct baud,
+ * works correctly and gets real fixes - see gnss_nmea_generic.c's
+ * increased buffer sizes (CHAT_RECV_BUF_SZ/CHAT_ARGV_SZ/UART_RX_BUF_SZ),
+ * required to avoid this module's sentence bursts overrunning the
+ * original small defaults.
+ */
+&lpuart2 {
+	current-speed = <115200>;
+
+	gnss1: gnss {
+		compatible = "gnss-nmea-generic";
+	};
+};

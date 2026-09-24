@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.13.1)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
-project(rdd2 LANGUAGES C)
+project(hab LANGUAGES C)
 
 # Suppress strncpy warning from upstream Zephyr USB MSC code (usbd_msc_scsi.c)
 # The strncpy usage is correct for fixed-size SCSI fields that don't need null termination
@@ -54,23 +54,23 @@ set(SOURCE_FILES
   src/input_mapping.c
   )
 
-if (CONFIG_CEREBRI_RDD2_FSM)
+if (CONFIG_CEREBRI_HAB_FSM)
   list(APPEND SOURCE_FILES src/fsm.c)
 endif()
 
-if (CONFIG_CEREBRI_RDD2_ESTIMATE)
+if (CONFIG_CEREBRI_HAB_ESTIMATE)
   list(APPEND SOURCE_FILES src/estimate.c)
 endif()
 
-if (CONFIG_CEREBRI_RDD2_ALLOCATION)
+if (CONFIG_CEREBRI_HAB_ALLOCATION)
   list(APPEND SOURCE_FILES src/allocation.c)
 endif()
 
-if (CONFIG_CEREBRI_RDD2_LIGHTING)
+if (CONFIG_CEREBRI_HAB_LIGHTING)
   list(APPEND SOURCE_FILES src/lighting.c)
 endif()
 
-if (CONFIG_CEREBRI_RDD2_COMMAND)
+if (CONFIG_CEREBRI_HAB_COMMAND)
   list(APPEND SOURCE_FILES
     src/command.c
     src/mode_bezier.c
@@ -79,46 +79,41 @@ if (CONFIG_CEREBRI_RDD2_COMMAND)
     src/mode_attitude_rate.c)
 endif()
 
-if (CONFIG_CEREBRI_RDD2_POSITION)
+if (CONFIG_CEREBRI_HAB_POSITION)
   list(APPEND SOURCE_FILES
     src/position.c)
-elseif (CONFIG_CEREBRI_RDD2_LOGLINEAR_POSITION)
+elseif (CONFIG_CEREBRI_HAB_LOGLINEAR_POSITION)
   list(APPEND SOURCE_FILES
     src/log_linear_position.c)
 endif()
 
-if (CONFIG_CEREBRI_RDD2_ANGULAR_VELOCITY)
+if (CONFIG_CEREBRI_HAB_ANGULAR_VELOCITY)
   list(APPEND SOURCE_FILES
     src/angular_velocity.c)
 endif()
 
-if (CONFIG_CEREBRI_RDD2_ATTITUDE)
+if (CONFIG_CEREBRI_HAB_ATTITUDE)
   list(APPEND SOURCE_FILES
     src/attitude.c)
-elseif (CONFIG_CEREBRI_RDD2_LOGLINEAR_ATTITUDE)
+elseif (CONFIG_CEREBRI_HAB_LOGLINEAR_ATTITUDE)
   list(APPEND SOURCE_FILES
     src/log_linear_attitude.c)
 endif()
 
-set(CASADI_DEST_DIR ${CMAKE_BINARY_DIR}/app/rdd2/casadi)
+set(CASADI_DEST_DIR ${CMAKE_BINARY_DIR}/app/hab/casadi)
 
 set(CASADI_FILES
-  ${CASADI_DEST_DIR}/rdd2.c
-  ${CASADI_DEST_DIR}/rdd2_loglinear.c
+  ${CASADI_DEST_DIR}/hab.c
   ${CASADI_DEST_DIR}/bezier.c
   )
 
-if (CONFIG_CEREBRI_RDD2_CASADI)
+if (CONFIG_CEREBRI_HAB_CASADI)
   list(APPEND SOURCE_FILES ${CASADI_FILES})
 endif()
 
-add_custom_command(OUTPUT ${CASADI_DEST_DIR}/rdd2.c
-  COMMAND ${CYECCA_PYTHON} ${CYECCA_PATH}/cyecca/models/rdd2.py ${CASADI_DEST_DIR}
-  DEPENDS ${CYECCA_PATH}/cyecca/models/rdd2.py)
-
-add_custom_command(OUTPUT ${CASADI_DEST_DIR}/rdd2_loglinear.c
-  COMMAND ${CYECCA_PYTHON} ${CYECCA_PATH}/cyecca/models/rdd2_loglinear.py ${CASADI_DEST_DIR}
-  DEPENDS ${CYECCA_PATH}/cyecca/models/rdd2_loglinear.py)
+add_custom_command(OUTPUT ${CASADI_DEST_DIR}/hab.c
+  COMMAND ${CYECCA_PYTHON} ${CYECCA_PATH}/cyecca/models/hab.py ${CASADI_DEST_DIR}
+  DEPENDS ${CYECCA_PATH}/cyecca/models/hab.py)
 
 add_custom_command(OUTPUT ${CASADI_DEST_DIR}/bezier.c
   COMMAND ${CYECCA_PYTHON} ${CYECCA_PATH}/cyecca/models/bezier.py ${CASADI_DEST_DIR}

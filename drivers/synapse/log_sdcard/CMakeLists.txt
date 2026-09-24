@@ -9,6 +9,7 @@ zephyr_include_directories(include)
 zephyr_library_sources(
   src/main.c
   src/writer.c
+  src/diag.c
   )
 
 if(CONFIG_FAT_FILESYSTEM_ELM)

@@ -66,6 +66,7 @@ ZROS_TOPIC_DECLARE(topic_magnetic_field, synapse_pb_MagneticField);
 ZROS_TOPIC_DECLARE(topic_moment_ff, synapse_pb_Vector3);
 ZROS_TOPIC_DECLARE(topic_moment_sp, synapse_pb_Vector3);
 ZROS_TOPIC_DECLARE(topic_nav_sat_fix, synapse_pb_NavSatFix);
+ZROS_TOPIC_DECLARE(topic_nav_sat_fix_estimator, synapse_pb_NavSatFix);
 ZROS_TOPIC_DECLARE(topic_odometry_estimator, synapse_pb_Odometry);
 ZROS_TOPIC_DECLARE(topic_odometry_ethernet, synapse_pb_Odometry);
 ZROS_TOPIC_DECLARE(topic_orientation_sp, synapse_pb_Vector3);

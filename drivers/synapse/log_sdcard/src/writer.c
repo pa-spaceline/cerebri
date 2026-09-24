@@ -11,6 +11,8 @@
 
 #include <log_sdcard.h>
 
+#include "diag.h"
+
 #if CONFIG_FAT_FILESYSTEM_ELM
 #include <ff.h>
 #endif
@@ -292,9 +294,11 @@ static void log_sdcard_writer_run(void *p0, void *p1, void *p2)
 			continue;
 		}
 
+		diag_breadcrumb("ring_buf_get_claim");
 		size = ring_buf_get_claim(&rb_sdcard, &data, BUF_SIZE);
 		if (size > 0) {
 			LOG_DBG("writing: %d bytes to sdcard", size);
+			diag_breadcrumb("fs_write");
 			size_written = fs_write(&ctx->file, data, size);
 			ctx->total_size_written += size_written;
 			ring_buf_get_finish(&rb_sdcard, size);
@@ -306,9 +310,12 @@ static void log_sdcard_writer_run(void *p0, void *p1, void *p2)
 		int64_t now_ticks = k_uptime_ticks();
 		if (now_ticks - last_ticks > 4 * CONFIG_SYS_CLOCK_TICKS_PER_SEC) {
 			LOG_DBG("fsync");
+			diag_breadcrumb("fs_sync");
 			last_ticks = now_ticks;
 			fs_sync(&ctx->file);
+			diag_breadcrumb("fs_sync done");
 		}
+		diag_breadcrumb("loop top");
 	}
 
 	// deconstructor

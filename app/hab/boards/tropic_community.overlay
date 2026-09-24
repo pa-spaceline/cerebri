@@ -1,0 +1,96 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Copyright 2026 CogniPilot Foundation */
+
+/*
+ * All hardware wiring for this board lives in zephyr_boards'
+ * boards/nxp/tropic_community/tropic_community.dts - this app-level
+ * overlay only maps the hab app's generic sensor/actuator aliases onto
+ * that board's chip labels, and configures the DShot actuator mapping,
+ * the same split mr_vmu_tropic.overlay uses relative to its own board.dts.
+ */
+
+/ {
+	aliases {
+		can0 = &flexcan3;
+		accel0 = &imu0;
+		gyro0 = &imu0;
+		mag0 = &ist8310;
+		mag1 = &bmm350;
+		baro0 = &bme280;
+		buzzer = &buzzer0;
+		gnss = &gnss1;
+		rc = &rc0;
+	};
+
+	dshot_actuators: dshot_actuators {
+		compatible = "cerebri,dshot-actuators";
+		aux0 {
+			input-type = "velocity";
+			input-index = <0>;
+			center = <200>;
+			scale = <1500>;
+			scale-div = <1000>;
+		};
+		aux1 {
+			input-type = "velocity";
+			input-index = <1>;
+			center = <200>;
+			scale = <1500>;
+			scale-div = <1000>;
+		};
+		aux2 {
+			input-type = "velocity";
+			input-index = <2>;
+			center = <200>;
+			scale = <1500>;
+			scale-div = <1000>;
+		};
+		aux3 {
+			input-type = "velocity";
+			input-index = <3>;
+			center = <200>;
+			scale = <1500>;
+			scale-div = <1000>;
+		};
+	};
+};
+
+/* GPS connector, Teensy pins 15/14 (enabled by the board dts, only the
+ * GNSS chip binding lives here - genuinely depends on which module gets
+ * plugged into the DS-009 connector, same reasoning mr_vmu_tropic uses
+ * for its own gnss1 node).
+ *
+ * Was "gnss-nmea-generic" (Zephyr's stock protocol-agnostic NMEA-0183
+ * listener) - confirmed dead-on-arrival with a real M10 GPS module: that
+ * driver only passively listens for NMEA sentences, it never sends the
+ * module anything, so if the module doesn't happen to already be in
+ * plain-NMEA-at-9600 mode (many u-blox M10 modules ship UBX-first, or at
+ * a different baud), Zephyr gets nothing while PX4 - which actively
+ * probes/configures the module via UBX - works fine on the same
+ * hardware. Switched to "u-blox,m8": M10 shares the same UBX protocol
+ * generation as M8/M9, and this exact binding+MCU family (MIMXRT1062)
+ * combination is Zephyr's own upstream reference example for a u-blox
+ * M10 module (zephyr/samples/drivers/gnss/boards/mimxrt1062_fmurt6.overlay,
+ * node literally named "u_blox_m10") - this actively configures the
+ * module the way PX4 does, instead of just hoping it's already talking
+ * plain NMEA.
+ */
+&lpuart2 {
+	/* SOLVED. Byte-level RX instrumentation on the u-blox,m10 driver
+	 * (which was correctly talking at this baud) showed the module
+	 * continuously streaming plain ASCII/NMEA text (e.g. bytes decoding
+	 * to ",08,19,21,318,..." - a GSV satellite-info sentence fragment),
+	 * never UBX binary frames. So the module's actual default output
+	 * protocol is NMEA, not UBX - the module was never broken, and 115200
+	 * (confirmed via Holybro's own docs for this exact module) was always
+	 * the correct baud. Both the M8 and M10 UBX-based drivers only ever
+	 * failed because they were listening for 0xB5 0x62 binary frames
+	 * that this module was never going to send. Back to the original,
+	 * simplest correct answer: gnss-nmea-generic, at the correct baud.
+	 */
+	current-speed = <115200>;
+
+	gnss1: gnss {
+		compatible = "gnss-nmea-generic";
+	};
+};

@@ -138,7 +138,13 @@ static void rdd2_estimate_run(void *p0, void *p1, void *p2)
 	int64_t ticks_last = k_uptime_ticks();
 
 	// Constants
-	static const double decl_WL = -4.494167 / 180 * M_PI; // magnetic declination for WL, IN
+	// TODO: hardcoded for whichever location is being tested/flown - not
+	// looked up from GPS position. Currently set for Odense, Denmark
+	// (+4.38 deg, NOAA WMM2025, valid ~2025-2029) for ongoing mag
+	// axis/calibration validation there. Previous value was -4.494167 deg,
+	// for WL, IN - restore that (or whatever the next test location is)
+	// when testing moves elsewhere.
+	static const double decl_WL = 4.38 / 180 * M_PI;
 	static const double g = 9.8;                          // gravity
 	static const double accel_gain = CONFIG_CEREBRI_RDD2_ATTITUDE_EST_ACCEL_GAIN * 1e-3;
 	static const double mag_gain = CONFIG_CEREBRI_RDD2_ATTITUDE_EST_MAG_GAIN * 1e-3;

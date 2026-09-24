@@ -201,6 +201,7 @@ ZROS_TOPIC_DEFINE(magnetic_field, synapse_pb_MagneticField);
 ZROS_TOPIC_DEFINE(moment_ff, synapse_pb_Vector3);
 ZROS_TOPIC_DEFINE(moment_sp, synapse_pb_Vector3);
 ZROS_TOPIC_DEFINE(nav_sat_fix, synapse_pb_NavSatFix);
+ZROS_TOPIC_DEFINE(nav_sat_fix_estimator, synapse_pb_NavSatFix);
 ZROS_TOPIC_DEFINE(odometry_estimator, synapse_pb_Odometry);
 ZROS_TOPIC_DEFINE(odometry_ethernet, synapse_pb_Odometry);
 ZROS_TOPIC_DEFINE(orientation_sp, synapse_pb_Quaternion);
@@ -235,6 +236,7 @@ static struct zros_topic *topic_list[] = {
 	&topic_magnetic_field,
 	&topic_moment_ff,
 	&topic_nav_sat_fix,
+	&topic_nav_sat_fix_estimator,
 	&topic_odometry_estimator,
 	&topic_odometry_ethernet,
 	&topic_orientation_sp,

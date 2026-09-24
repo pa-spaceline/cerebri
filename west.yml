@@ -14,6 +14,8 @@ manifest:
       url-base: https://github.com/zephyrproject-rtos
     - name: cognipilot
       url-base: https://github.com/CogniPilot
+    - name: pa-spaceline
+      url-base: git@github.com:pa-spaceline
 
   projects:
     - name: zephyr
@@ -25,6 +27,7 @@ manifest:
           - nanopb
           - mbedtls
           - hal_nxp
+          - hal_tdk
           - cmsis
           - cmsis-dsp
           - cmsis_6
@@ -49,10 +52,10 @@ manifest:
       revision: cf8f1631e862528ee044850bcc70273975b90771 # master 10/27/25
       path: modules/hal/nxp
     - name: zros_drivers
-      remote: cognipilot
-      revision: 61dba155d8f5f8e82419ca8c8901a47dbd00b480 # main 01/07/26
+      remote: pa-spaceline
+      revision: d86fb513f214613a91350a5e981e29e94f176157 # fix-baro-crash 09/08/26
       path: modules/lib/zros_drivers
     - name: zephyr_boards
-      remote: cognipilot
-      revision: f3aec493d95570392e8816947161691fdb2c17cf # main 03/27/27
+      remote: pa-spaceline
+      revision: 45bb68644858970c7f4112d082776ee7cb10c6f6 # main 09/07/26
       path: modules/lib/zephyr_boards

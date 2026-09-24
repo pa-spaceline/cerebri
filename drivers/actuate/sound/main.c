@@ -60,7 +60,7 @@ static void init_actuate_sound(context *ctx)
 
 static int play_sound(context *ctx, struct tones_t *sound, size_t sound_size)
 {
-	int err;
+	int err = 0;
 	for (size_t i = 0; i < sound_size; i++) {
 		if (sound[i].note == REST) {
 			err = pwm_set_pulse_dt(&ctx->buzzer, 0);
@@ -69,12 +69,16 @@ static int play_sound(context *ctx, struct tones_t *sound, size_t sound_size)
 					 PWM_HZ((sound[i].note)) / 2);
 		}
 		if (err) {
-			return err;
+			break;
 		}
 		k_msleep(sound[i].duration);
 	}
-	err = pwm_set_pulse_dt(&ctx->buzzer, 0);
-	return err;
+	/* Always silence the buzzer before returning, even if a note above
+	 * failed partway through - otherwise the buzzer is left stuck on
+	 * indefinitely at whatever tone was last set.
+	 */
+	int stop_err = pwm_set_pulse_dt(&ctx->buzzer, 0);
+	return err ? err : stop_err;
 }
 
 static void actuate_sound_entry_point(void *p0, void *p1, void *p2)
@@ -106,6 +110,14 @@ static void actuate_sound_entry_point(void *p0, void *p1, void *p2)
 
 		if (zros_sub_update_available(&ctx->sub_status)) {
 			zros_sub_update(&ctx->sub_status);
+			/* Debug: track exactly what this thread receives and when,
+			 * to find why the startup tone sometimes never plays.
+			 * fsm's publish is event-driven with a 1s timeout fallback,
+			 * not a hot loop, so this won't flood the console.
+			 */
+			LOG_WRN("status update: safety=%d (last=%d) arming=%d mode=%d started=%d",
+				ctx->status.safety, ctx->status_last_safety, ctx->status.arming,
+				ctx->status.mode, ctx->started);
 		}
 
 		if (ctx->status.mode != ctx->status_last_mode) {
