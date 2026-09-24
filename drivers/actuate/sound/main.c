@@ -110,6 +110,14 @@ static void actuate_sound_entry_point(void *p0, void *p1, void *p2)
 
 		if (zros_sub_update_available(&ctx->sub_status)) {
 			zros_sub_update(&ctx->sub_status);
+			/* Debug: track exactly what this thread receives and when,
+			 * to find why the startup tone sometimes never plays.
+			 * fsm's publish is event-driven with a 1s timeout fallback,
+			 * not a hot loop, so this won't flood the console.
+			 */
+			LOG_WRN("status update: safety=%d (last=%d) arming=%d mode=%d started=%d",
+				ctx->status.safety, ctx->status_last_safety, ctx->status.arming,
+				ctx->status.mode, ctx->started);
 		}
 
 		if (ctx->status.mode != ctx->status_last_mode) {
