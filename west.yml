@@ -37,7 +37,7 @@ manifest:
           - segger
     - name: zros
       remote: cognipilot
-      revision: 843348bca3a15e914914b90057369b9616302e20 # main 10/27/25
+      revision: 843348bca3a15e914914b90057369b9616302e20 # main 10/27/25 - tried bumping to 3f80b3b (latest): fixed the ZROS_TOPIC_DECLARE prefix break (see git history for synapse_topic_list.h), but it also deprecates zros_sub_get_event() in favor of a k_event-based wait, used in 36+ files across every app - a real behavioral migration, not mechanical. Reverted; applying the one-line mutex fix locally on top of this commit instead.
       path: modules/lib/zros
     - name: cyecca
       remote: cognipilot
