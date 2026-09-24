@@ -36,8 +36,8 @@ manifest:
           - libmetal
           - segger
     - name: zros
-      remote: cognipilot
-      revision: 843348bca3a15e914914b90057369b9616302e20 # main 10/27/25 - tried bumping to 3f80b3b (latest): fixed the ZROS_TOPIC_DECLARE prefix break (see git history for synapse_topic_list.h), but it also deprecates zros_sub_get_event() in favor of a k_event-based wait, used in 36+ files across every app - a real behavioral migration, not mechanical. Reverted; applying the one-line mutex fix locally on top of this commit instead.
+      remote: pa-spaceline
+      revision: fc47b9339791a3c4ad3f410ed74f132110aa880e # main 10/27/25 + write-mutex leak fix (only on our fork, not upstream). Latest upstream (3f80b3b) also deprecates zros_sub_get_event() in favor of a k_event-based wait, used in 36+ files across every app - a real behavioral migration, not mechanical, deferred for now.
       path: modules/lib/zros
     - name: cyecca
       remote: cognipilot
