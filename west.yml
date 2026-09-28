@@ -58,7 +58,7 @@ manifest:
       path: modules/hal/nxp
     - name: zros_drivers
       remote: pa-spaceline
-      revision: d86fb513f214613a91350a5e981e29e94f176157 # fix-baro-crash 09/08/26
+      revision: 2f269603689ef2e98f2d8d91594297e01dc65d8a # tropic-community-fixes 09/28/26
       path: modules/lib/zros_drivers
     - name: zephyr_boards
       remote: pa-spaceline
