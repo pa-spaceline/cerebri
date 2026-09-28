@@ -19,15 +19,14 @@ manifest:
 
   projects:
     - name: zephyr
-      remote: cognipilot
+      remote: pa-spaceline
       west-commands: scripts/west-commands.yml
-      revision: 1ed05cebff756812c1447f53fe93f09b687cb4d0 # main-with-patches 04/13/26
+      revision: af7ea8830d61d32b6f44b9335ab3ea25d3aa0e53 # tropic-community-fixes 09/28/26
       import:
         - name-allowlist:
           - nanopb
           - mbedtls
           - hal_nxp
-          - hal_tdk
           - cmsis
           - cmsis-dsp
           - cmsis_6
@@ -39,9 +38,15 @@ manifest:
       remote: pa-spaceline
       revision: 003a2dc03adec493b83bd6fcff58f61b4e59924a # tropic-community-fixes 09/28/26
       path: modules/lib/zros
+    - name: hal_tdk
+      remote: pa-spaceline
+      revision: 9fe7945ca534f82dfc6942f11fc8719069299708 # tropic-community-fixes 09/24/26
+      path: modules/hal/tdk
+      groups:
+        - hal
     - name: cyecca
-      remote: cognipilot
-      revision: 64d1f0dc5127d85765909f0c3525cc38305dac19 # main 11/17/25
+      remote: pa-spaceline
+      revision: 3fc65f3e756d5262914e1b6047a38779b699cb17 # tropic-community-fixes 09/24/26
       path: modules/lib/cyecca
     - name: synapse_pb
       remote: cognipilot
@@ -57,5 +62,5 @@ manifest:
       path: modules/lib/zros_drivers
     - name: zephyr_boards
       remote: pa-spaceline
-      revision: 45bb68644858970c7f4112d082776ee7cb10c6f6 # main 09/07/26
+      revision: 132d0a3be7ecb473e8bc26715a643d97d4d38459 # tropic-community-fixes 09/24/26
       path: modules/lib/zephyr_boards
