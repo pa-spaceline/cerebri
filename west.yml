@@ -36,8 +36,8 @@ manifest:
           - libmetal
           - segger
     - name: zros
-      remote: cognipilot
-      revision: 843348bca3a15e914914b90057369b9616302e20 # main 10/27/25
+      remote: pa-spaceline
+      revision: 003a2dc03adec493b83bd6fcff58f61b4e59924a # tropic-community-fixes 09/28/26
       path: modules/lib/zros
     - name: cyecca
       remote: cognipilot
